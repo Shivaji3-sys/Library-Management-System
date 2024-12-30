@@ -1,0 +1,198 @@
+﻿@model LibraryManagementSystem.Models.StudentClass
+
+@{
+    ViewBag.Title = "Issue Book";
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<h2>Issue Book</h2>
+
+<div class="container">
+    <div class="row" style="border:2px solid red;">
+        <center>
+            <h4>Student Details</h4>
+        </center>
+        <hr />
+        <div class="col-md-4 text-center">
+            <img src="~/Content/Image/IssueBook_IMG.jpg" alt="Student Icon" class="img-fluid mb-3" style="width:120px;height:120px" />
+            <center>
+                <div class="form-group">
+                    <label for="EnrollmentNo">Enter Enrollment No:</label>
+                    @Html.EditorFor(model => model.EnrollmentNo, new { htmlAttributes = new { @class = "form-control", @id = "EnrollmentNoID" } })
+                    @Html.ValidationMessageFor(model => model.EnrollmentNo, "", new { @class = "text-danger" })
+                </div>
+            </center>
+            <button class="btn btn-primary btn-block" onclick="StudentFun()">Search Student</button>
+            <button class="btn btn-secondary btn-block">Refresh</button>
+            <button class="btn btn-danger btn-block">Exit</button>
+        </div>
+        <div class="col-md-8">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StudentName, "Student Name", new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.StudentName, new { htmlAttributes = new { @class = "form-control", @id = "StudentName" } })
+                            @Html.ValidationMessageFor(model => model.StudentName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Department, new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control", @id = "Department" } })
+                            @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Semester, new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Semester, new { htmlAttributes = new { @class = "form-control", @id = "Semester" } })
+                            @Html.ValidationMessageFor(model => model.Semester, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Contact, new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Contact, new { htmlAttributes = new { @class = "form-control", @id = "Contact" } })
+                            @Html.ValidationMessageFor(model => model.Contact, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @id = "Email" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="BooksName" class="control-label col-md-4">Books Name</label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(model => model.SelectedBook,Model.BookList,"Select a Book",new { @class = "form-control", @id = "SelectedBook" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IssueDate" class="control-label col-md-4">Book Issue Date</label>
+                        <div class="col-md-8">
+                            <input type="date" id="IssueDate" name="IssueDate" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-8">
+                            <input type="button" value="Issue Book" class="btn btn-success"  onclick="SaveIssueBookDetails()"/>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function StudentFun() {
+        var inputElement = document.getElementById("EnrollmentNoID");
+        if (!inputElement) {
+            console.error("Element with ID 'EnrollmentNoID' not found.");
+            return;
+        }
+        var EnrollmentNoID = inputElement.value.trim();
+        if (!EnrollmentNoID) {
+            console.warn("EnrollmentNoID is empty.");
+            return;
+        }
+
+        $.post("/Student/getStudentDataByID/", { Id: EnrollmentNoID })
+            .done(function (data) {
+                if (data) {
+                    if (data.StudentName) {
+                        document.getElementById("StudentName").value = data.StudentName;
+                    }
+                    if (data.Department) {
+                        document.getElementById("Department").value = data.Department;
+                    }
+                    if (data.Semester) {
+                        document.getElementById("Semester").value = data.Semester;
+                    }
+                    if (data.Contact) {
+                        document.getElementById("Contact").value = data.Contact;
+                    }
+                    if (data.Email) {
+                        document.getElementById("Email").value = data.Email;
+                    }
+                } else {
+                    console.warn("No data returned from server.");
+                }
+            })
+            .fail(function (xhr, status, error) {
+                console.error("Error occurred:", status, error);
+            });
+
+    }
+</script>
+
+
+<script>
+
+    function SaveIssueBookDetails() {
+        // Retrieve all field values by their IDs
+        var enrollmentNo = document.getElementById("EnrollmentNoID").value;
+        var studentName = document.getElementById("StudentName").value;
+        var department = document.getElementById("Department").value;
+        var semester = document.getElementById("Semester").value;
+        var contact = document.getElementById("Contact").value;
+        var email = document.getElementById("Email").value;
+        var selectedBook = document.getElementById("SelectedBook").value;
+        var issueDate = document.getElementById("IssueDate").value;
+
+        // Validate required fields
+        if (!enrollmentNo || !studentName || !department || !semester || !contact || !email || !selectedBook || !issueDate) {
+            alert("All fields are required!");
+            return;
+        }
+
+        var issueBookData = {
+            EnrollmentNo: enrollmentNo,
+            StudentName: studentName,
+            Department: department,
+            Semester: semester,
+            Contact: contact,
+            Email: email,
+            SelectedBook: selectedBook,
+            IssueDate: issueDate
+        };
+         issueBookData = JSON.stringify(issueBookData);
+        $.post("/Home/saveIssueBookData", { issueBookData: issueBookData })
+            .done(function (response) {
+                if (response.success) {
+                    alert("Book issued successfully!");
+                    document.getElementById("EnrollmentNoID").value = "";
+                    document.getElementById("StudentName").value = "";
+                    document.getElementById("Department").value = "";
+                    document.getElementById("Semester").value = "";
+                    document.getElementById("Contact").value = "";
+                    document.getElementById("Email").value = "";
+                    document.getElementById("SelectedBook").value = "";
+                    document.getElementById("IssueDate").value = "";
+                } else {
+                    alert("Failed to issue book: " + response.message);
+                }
+            })
+            .fail(function (xhr, status, error) {
+                console.error("Error occurred:", status, error);
+                alert("An error occurred while saving the data. Please try again.");
+            });
+    }
+
+
+</script>

@@ -1,0 +1,151 @@
+﻿@{
+    ViewBag.Title = "GetAllStudentData";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .search-container input {
+                width: 50%;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons input {
+            padding: 6px 12px;
+            border: none;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .action-buttons input:hover {
+                background-color: #e60000;
+            }
+
+        .no-results {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+    </style>
+    <script>
+        function searchStudent() {
+            const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.querySelectorAll("tbody tr");
+            let hasResults = false;
+
+            rows.forEach(row => {
+                const studentName = row.querySelector("td[data-label='Student Name']").innerText.toLowerCase();
+                if (studentName.includes(searchQuery)) {
+                    row.style.display = "";
+                    hasResults = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            document.getElementById("noResults").style.display = hasResults ? "none" : "block";
+        }
+    </script>
+</head>
+<body>
+    <h2>Get All Student Data</h2>
+
+    <div class="search-container">
+        <input type="text"
+               id="searchInput"
+               onkeyup="searchStudent()"
+               placeholder="Search for a student by name..." />
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Enrollment No</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Semester</th>
+                <th>Contact</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.StuALLData)
+            {
+                <tr>
+                    <td data-label="Student Name">@item.StudentName</td>
+                    <td data-label="Enrollment No">@item.EnrollmentNo</td>
+                    <td data-label="Email">@item.Email</td>
+                    <td data-label="Department">@item.Department</td>
+                    <td data-label="Semester">@item.Semester</td>
+                    <td data-label="Contact">@item.Contact</td>
+                    <td class="action-buttons" data-label="Action">
+                        <input type="button" onclick="window.location.href='@Url.Action("Delete", "Student", new { id = @item.Id })'" value="Delete" name="Delete" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="noResults" class="no-results" style="display: none;">
+        No results found.
+    </div>
+</body>
+</html>

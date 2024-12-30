@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "AllIssueBook";
+}
+<style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Responsive Design */
+        @@media screen and (max-width: 768px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+</style>
+<br />
+<br />
+<br />
+
+<h2>AllIssueBook</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Selected Book</th>
+            <th>Student Name</th>
+            <th>Enrollment No</th>
+            <th>Department</th>
+            <th>Semester</th>
+            <th>Email</th>
+            <th>Contact</th>
+            @*<th>Issue Date</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.ListIssueData)
+        {
+<tr>
+    <td>@item.SelectedBook</td>
+    <td>@item.StudentName</td>
+    <td>@item.EnrollmentNo</td>
+    <td>@item.Department</td>
+    <td>@item.Semester</td>
+    <td>@item.Email</td>
+    <td>@item.Contact</td>
+    @*<td>@item.issueDate</td>*@
+</tr>}
+    </tbody>
+</table>
